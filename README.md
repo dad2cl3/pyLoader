@@ -76,7 +76,7 @@ The process flow using standard database inserts might look as follows:
 
 Databases are very efficient at processing INSERT statements and even doing a succession of INSERT statements can be made to occur more quickly if only a single COMMIT is performed after all INSERT statements are executed. Unfortunately, INSERT statements don't scale well even when the COMMIT is delayed. The underlying database overhead of INSERT statements creates latency in the processing that can not be optimized.
 
-###PostgreSQL COPY
+### PostgreSQL COPY
 The *COPY FROM* command essentially tells PostgreSQL to read data from a file and append it to a table within the database. The COPY command does not incur the overhead of a database INSERT statement because the operation is handled differently by the PostgreSQL database engine.
 
 The popular Python library *psycopg2* has implemented the COPY command with a twist. psycopg2 supports the ability to load file-like data created within a Python script to the database. The format of the data within the file-like data is very prescriptive and much match the expected format of the table into which the data is being appended. Assuming the data to be loaded has the following format:
@@ -114,7 +114,7 @@ The important parameter in the *psycopg2.copy_from* method is *sep* which stands
 The new process flow might look something like this:
 
 [insert process flow]
-##Fine Print
+# Fine Print
 The devil is always in the details and this process is no different. The unique identifiers for platform, clan, account, and character data maintained by Bungie does not necessarily match the unique identifiers within a custom database. As a result, continuity must be maintained throughout the processing to make sure the final insert is successful.
 
 The API endpoint GetAggregateActivityStats requires three parameters: Platform (PlayStation, Xbox, or Battle.net), Account, and Character. The query used to request the necessary parameters for getting stats returns each character with the Bungie identifiers and local database identifiers as a JSON object using the PostgreSQL *JSONB_BUILD_OBJECT* function. The return from the query is structured as followed:
