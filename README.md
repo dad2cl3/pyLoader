@@ -4,10 +4,10 @@ Example of leveraging Python futures and PostgreSQL COPY command to bulk load Bu
 ### Background
 The video game studio Bungie has created an API through which developers can access data for the video game Destiny 2. The API has both public and private endpoints that can pull data (public and private endpoints) and manage inventory of characters (private endpoints). Bungie has imposed a rate limit on the API as would be expected to avoid abuse. Currently, Bungie throttles requests that exceed 25 requests per second over a rolling ten second period.
 
-Avoiding the rate limit is pretty easy using single-threaded requests where the network latency of the request-response round trip is incurred for every request. Unfortunately, not all endpoints are created alike. Some return a tremendous amount of data that requires additional processing time to parse and, in this scenario, load to a database. As a result, single-threaded processing needs to be replaced with multi-threaded processing using Python futures which will be explained later.
+Avoiding the rate limit is pretty easy using single-threaded requests where the network latency of the request-response round trip is incurred for every request. Unfortunately, not all endpoints are created alike. Some return a tremendous amount of data that requires additional processing time to parse and, in this scenario, load to a database. As a result, single-threaded API processing needs to be replaced with multi-threaded API processing using Python futures which will be explained later.
 
 Database latency also presents a challenge to overall performance as well. Executing a single database INSERT followed by a COMMIT for each record to be inserted from the API response can easily extend overall processing time. Fortunately, PostgreSQL provides a COPY command for fast copying of file data directly into a database table. The extremely popular Python library psycopg2 has an implemenation of the COPY command that supports the copying of file-like data directly to a table which will be explained in detail later.
-##Sample Results
+## Sample Results
 The following results are based on the Bungie API endpoint GetAggregateActivityStats.
 ### Single-threaded processing
 The number of total requests has been limited to ten characters, or ten API requests, for single-threaded processing.
