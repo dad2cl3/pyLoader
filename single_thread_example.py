@@ -3,16 +3,16 @@ import json, psycopg2, requests, time
 with open('config.json', 'r') as configFile:
     config = json.load(configFile)
 
-apiConfig = config['API']
-dbConfig = config['Database']
-sqlConfig = config['SQL']
+api_config = config['API']
+db_config = config['Database']
+sql_config = config['SQL']
 
 def handler (event, context):
     # connect to database
-    pg = psycopg2.connect(host=dbConfig['host'], port=dbConfig['port'], database=dbConfig['database'], user=dbConfig['user'], password=dbConfig['password'])
+    pg = psycopg2.connect(host=db_config['host'], port=db_config['port'], database=db_config['database'], user=db_config['user'], password=db_config['password'])
     # get characters
     pg_cursor = pg.cursor()
-    pg_cursor.execute(sqlConfig['characterSelect'])
+    pg_cursor.execute(sql_config['characterSelect'])
     query_results = pg_cursor.fetchall()
 
     characters = query_results
@@ -23,11 +23,11 @@ def handler (event, context):
     # get aggregate stats
     for character in characters:
         character = character[0]
-        url = apiConfig['url'].format(character['destiny_membership_type'], character['destiny_id'], character['character_id'])
+        url = api_config['url'].format(character['destiny_membership_type'], character['destiny_id'], character['character_id'])
         print(url)
 
         headers = {
-            'X-API-Key': apiConfig['xApiKey']
+            'X-API-Key': api_config['xApiKey']
         }
         api_start_time = time.time()
         response = requests.get(url, headers=headers)
@@ -47,7 +47,7 @@ def handler (event, context):
                     stat = stats[stat]
 
                     db_start_time = time.time()
-                    pg_cursor.execute(sqlConfig['statInsert'], (
+                    pg_cursor.execute(sql_config['statInsert'], (
                         character['group_id'],
                         character['clan_id'],
                         character['member_id'],
