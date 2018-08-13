@@ -7,6 +7,30 @@ The video game studio Bungie has created an API through which developers can acc
 Avoiding the rate limit is pretty easy using single-threaded requests where the network latency of the request-response round trip is incurred for every request. Unfortunately, not all endpoints are created alike. Some return a tremendous amount of data that requires additional processing time to parse and, in this scenario, load to a database. As a result, single-threaded processing needs to be replaced with multi-threaded processing using Python futures which will be explained later.
 
 Database latency also presents a challenge to overall performance as well. Executing a single database INSERT followed by a COMMIT for each record to be inserted from the API response can easily extend overall processing time. Fortunately, PostgreSQL provides a COPY command for fast copying of file data directly into a database table. The extremely popular Python library psycopg2 has an implemenation of the COPY command that supports the copying of file-like data directly to a table which will be explained in detail later.
+##Sample Results
+The following results are based on the Bungie API endpoint GetAggregateActivityStats.
+### Single-threaded processing
+The number of total requests has been limited to ten characters, or ten API requests, for single-threaded processing.
+
+```
+API Requests: 10
+API Execution: 4.83s
+Database Inserts: 12848
+Database Execution: 22.34s
+```
+
+### Multi-threaded processing
+The number of total requests has not been limited for multi-threaded processing.
+
+```
+Requests 551
+API Execution: 34.78s
+Database Loading Execution: 38.84s
+Inserts: 672768
+```
+
+A comparison of performance is pretty telling. The single-threaded throughput for the API averaged ~0.48s per request, while the multi-threaded processing averaged ~0.06s per request. The traditional database insert averaged ~0.06s per INSERT while the COPY command averaged ~0.00006s per insert.
+# Details
 ## API
 ### Single-threaded processing
 A typical model for pullling data would be to gather all the attributes needed for a particular endpoint, loop through the attributes, and request data. As mentioned earlier, each request-response round trip is completed before another request-response round trip is initiated. The process flow might look like this:
@@ -90,30 +114,6 @@ The important parameter in the *psycopg2.copy_from* method is *sep* which stands
 The new process flow might look something like this:
 
 [insert process flow]
-
-##Sample Results
-The following results are based on the Bungie API endpoint GetAggregateActivityStats.
-### Single-threaded processing
-The number of total requests has been limited to ten characters, or ten API requests, for single-threaded processing.
-
-```
-API Requests: 10
-API Execution: 4.83s
-Database Inserts: 12848
-Database Execution: 22.34s
-```
-
-### Multi-threaded processing
-The number of total requests has not been limited for multi-threaded processing.
-
-```
-Requests 551
-API Execution: 34.78s
-Database Loading Execution: 38.84s
-Inserts: 672768
-```
-
-A comparison of performance is pretty telling. The single-threaded throughput for the API averaged ~0.48s per request, while the multi-threaded processing averaged ~0.06s per request. The traditional database insert averaged ~0.06s per INSERT while the COPY command averaged ~0.00006s per insert.
 ##Fine Print
 The devil is always in the details and this process is no different. The unique identifiers for platform, clan, account, and character data maintained by Bungie does not necessarily match the unique identifiers within a custom database. As a result, continuity must be maintained throughout the processing to make sure the final insert is successful.
 
