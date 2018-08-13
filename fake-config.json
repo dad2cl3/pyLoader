@@ -1,0 +1,26 @@
+{
+  "API": {
+    "xApiKey": "YOUR-API-KEY",
+    "url": "https://www.bungie.net/Platform/Destiny2/{0}/Account/{1}/Character/{2}/Stats/AggregateActivityStats/"
+  },
+  "Database": {
+    "host": "YOUR-DATABASE-HOST",
+    "port": 5432,
+    "database": "YOUR-DATABASE-NAME",
+    "user": "YOUR-DATABASE-USER",
+    "password": "YOUR-DATABASE-USER-PASSWORD"
+  },
+  "SQL": {
+    "characterSelect": "SELECT * FROM groups.vw_active_characters_json LIMIT 1",
+    "statInsert": "INSERT INTO stats.t_aggregate_activity_stats(group_id, clan_id, member_id, character_id, activity_hash, stat_id, stat) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+    "characterInsert": "INSERT INTO stats.t_character_stats(stat, group_id, clan_id, member_id, character_id, game_mode, stat_id) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+    "truncateActivity" : "TRUNCATE TABLE stats.t_aggregate_activity_stats",
+    "refreshActivity" : "SELECT stats.fn_refresh_materialized_view('stats.mv_aggregate_activity_stats')",
+    "analyzeActivityTable" : "ANALYZE stats.t_aggregate_activity_stats",
+    "analyzeActivityView" : "ANALYZE stats.mv_aggregate_activity_stats",
+    "truncateCharacter" : "TRUNCATE TABLE stats.t_character_stats",
+    "refreshCharacter" : "SELECT stats.fn_refresh_materialized_view('stats.mv_character_stats')",
+    "analyzeCharacterTable" : "ANALYZE stats.t_character_stats",
+    "analyzeCharacterView" : "ANALYZE stats.mv_character_stats"
+  }
+}

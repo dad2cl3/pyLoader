@@ -1,0 +1,8 @@
+Resources:
+  SingleThreadExample:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: single_thread_example.handler
+      Runtime: python3.6
+      Timeout: 300
+      MemorySize: 1024

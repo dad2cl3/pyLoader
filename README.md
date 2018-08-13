@@ -115,7 +115,7 @@ The new process flow might look something like this:
 
 [insert process flow]
 # Fine Print
-The devil is always in the details and this process is no different. The unique identifiers for platform, clan, account, and character data maintained by Bungie does not necessarily match the unique identifiers within a custom database. As a result, continuity must be maintained throughout the processing to make sure the final insert is successful.
+The devil is always in the details and this process is no different. The unique identifiers for platform, clan, account, and character data maintained by Bungie does not necessarily match the unique identifiers within a custom database. As a result, continuity must be maintained throughout the processing to make sure the final insert is accurate.
 
 The API endpoint GetAggregateActivityStats requires three parameters: Platform (PlayStation, Xbox, or Battle.net), Account, and Character. The query used to request the necessary parameters for getting stats returns each character with the Bungie identifiers and local database identifiers as a JSON object using the PostgreSQL *JSONB_BUILD_OBJECT* function. The return from the query is structured as followed:
 ```json
