@@ -1,0 +1,8 @@
+Resources:
+  GetAggregateActivityStats:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get_aggregate_activity_stats.handler
+      Runtime: python3.6
+      Timeout: 120
+      MemorySize: 320
